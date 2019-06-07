@@ -19,7 +19,7 @@ def main(args):
     Execution Control
     '''
     # uses nmap api to disover nodes
-    l = discscan(get_target())
+    l = discscan(get_target(args.target))
     if args.scanonly:
         pass
     else:
@@ -62,12 +62,16 @@ def create_session(dburl):
 	neoun = "neo4j"
     gdb = GraphDatabase(addr, username=neoun, password=getpass('Enter neo4j password: '))
     return gdb
-def get_target():
+def get_target(args_target):
     '''
     Gets the address that is to be scanned from user
-    and returns it as a string
+    and returns it as a string if not specified using a cmdline argument
     '''
-    target = raw_input("Please enter a target address/range/CIDR: ")
+    target = ''
+    if args_target != None:
+        target = args_target
+    else:
+        target = raw_input("Please enter a target address/range/CIDR: ")
     return target
 
 def discscan(target):
@@ -242,6 +246,7 @@ if __name__ == "__main__":
     parser.add_argument('-a', '--allscans', help='\tperform node, service and port discovery ', action='store_true')
     parser.add_argument('-s', '--scanonly', help='\tperform scan only and print results to screen. Do not injest into DB', action='store_true')
     parser.add_argument('-d', '--database-url', type=str, help='\tdefine database url, e.g. http://database.com:7474')
+    parser.add_argument('-t', '--target', type=str, help='\tset target address/range/CIDR')
     args = parser.parse_args()
 
     main(args)
