@@ -1,0 +1,3 @@
+termcolor
+python-nmap
+neo4jrestclient

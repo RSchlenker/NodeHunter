@@ -7,7 +7,10 @@ The nodehunter module is a Python based executable that takes advantage of the N
 - Python 2.7.x
 - neo4jrestclient
 - Python-nmap
+- termcolor
 ```
+Install requirements with pip:
+__pip install -r requirements.txt__
 
 ***usage: nodehunter.py [-h] [-n] [-a] [-s]***
 ```
