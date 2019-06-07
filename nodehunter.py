@@ -24,7 +24,7 @@ def main(args):
         pass
     else:
 	# establishes communication & session w/ db
-        gdb = create_session()
+        gdb = create_session(args.database_url)
 
     if args.nodes:
         if args.scanonly:
@@ -40,20 +40,26 @@ def main(args):
             return 0
     else:
         return 1
-def create_session():
+def create_session(dburl):
     '''
     Gets IP of server & returns session token
     '''
     neoip = "0"
-    neoip = raw_input('Enter IP of neo4j DB or press [ENTER] for localhost: ')
-    if neoip == '':
-        print "Using 'localhost' "
-        neoip = 'localhost'
+    addr = ''
+    if dburl != None:
+        print('Database: ', dburl)
+        addr = dburl + '/db/data/'
+    else:
+        neoip = raw_input('Enter IP of neo4j DB or press [ENTER] for localhost: ')
+        if neoip == '':
+            print "Using 'localhost' "
+            neoip = 'localhost'
+        # use https as default if not specified other
+        addr = 'https://' + neoip + '7473/db/data/'
     neoun = "0"
     neoun = raw_input('Enter neo4j DB username or press [ENTER] for neo4j: ')
     if len(neoun) == 0:
 	neoun = "neo4j"
-    addr = 'https://' + neoip + ':7473/db/data/'
     gdb = GraphDatabase(addr, username=neoun, password=getpass('Enter neo4j password: '))
     return gdb
 def get_target():
@@ -232,9 +238,10 @@ if __name__ == "__main__":
         print "<command> --help"
         sys.exit()
     parser = argparse.ArgumentParser()
-    parser.add_argument('-n', '--nodes', help='\tonly perforom node discovery', action='store_true')
+    parser.add_argument('-n', '--nodes', help='\tonly perform node discovery', action='store_true')
     parser.add_argument('-a', '--allscans', help='\tperform node, service and port discovery ', action='store_true')
     parser.add_argument('-s', '--scanonly', help='\tperform scan only and print results to screen. Do not injest into DB', action='store_true')
+    parser.add_argument('-d', '--database-url', type=str, help='\tdefine database url, e.g. http://database.com:7474')
     args = parser.parse_args()
 
     main(args)
